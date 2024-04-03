@@ -21,6 +21,7 @@ class Amaroks : Monsters, Istats
 
     public new void LoseHealth(int dmg)
     {
+        System.Console.WriteLine($"{name} took {dmg} damage!");
         health = health - dmg;
     }
 }

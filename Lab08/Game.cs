@@ -1,4 +1,5 @@
 using System.Formats.Asn1;
+using System.Runtime.InteropServices;
 
 namespace Lab08;
 public class Game
@@ -7,10 +8,12 @@ public class Game
     public Armaments bow {get; }
     private bool play;
     private Coordinates finder = new Coordinates();
+    private Player player {get; }
     public Game(string input)
     {
         _board = new Board(input);
         bow = new Armaments();
+        player = new Player();
     }
     public void Run()
     {
@@ -25,10 +28,14 @@ public class Game
             Console.ReadKey();
         }
     }
+    private void DisplayBar()
+    {
+        System.Console.WriteLine("----------------------------------------------------------------------------------");
+    }
     private void Display()
     {
-        System.Console.WriteLine($@"----------------------------------------------------------------------------------
-You are in the room at Row {finder.x} and Column {finder.y}).");
+        DisplayBar();
+        Console.WriteLine($"You are in the room at Row {finder.x} and Column {finder.y}).");
         if (_board?.layout?[finder.x, finder.y] == null){ }
         else if (_board.layout[finder.x, finder.y].identifier == 1 || _board.layout[finder.x, finder.y].identifier == 2)
         {
@@ -134,9 +141,6 @@ You are in the room at Row {finder.x} and Column {finder.y}).");
                 case 4:
                     Battle();
                     break;
-                case 5:
-                    Battle();
-                    break;
                 default:
                     break;
             }
@@ -149,27 +153,62 @@ You are in the room at Row {finder.x} and Column {finder.y}).");
     private void Battle()
     {
         Random rnd = new Random();
-        int playernum = rnd.Next(1, 20);
-        int enemynum = rnd.Next(1, 20);
-        if (bow.arrows > 0)
+        System.Console.WriteLine($"You enter a room with a {_board?.layout?[finder.x, finder.y]?.monster?.name}.");
+        while (true)
         {
-            // System.Console.WriteLine($"You rolled a {playernum} against the {_board?.layout?[finder.x, finder.y].name}'s {enemynum}");
-            if (playernum > enemynum)
+            System.Console.WriteLine();
+            DisplayBar();
+            if (_board!.layout![finder.x, finder.y].monster!.health <= 0)
             {
-                System.Console.WriteLine("You shoot and kill the Amarok!");
-                _board!.layout![finder.x, finder.y] = null!;
+                System.Console.WriteLine($"You killed the {_board.layout[finder.x, finder.y].monster!.name}");
+            }
+            Console.ReadKey();
+            int playernum = rnd.Next(1, 21);
+            int enemynum = rnd.Next(1, 21);
+            System.Console.Write($"You rolled a {playernum}! ");
+            if (playernum == 20)
+            {
+                System.Console.Write("You rolled a critical hit! ");
+                _board!.layout![finder.x, finder.y].monster!.LoseHealth(rnd.Next(0, 21) * 2);
+
+            }
+            else if (_board!.layout![finder.x, finder.y].monster!.CheckAC(playernum))
+            {
+                _board.layout[finder.x, finder.y].monster!.LoseHealth(rnd.Next(0, 21));
             }
             else
             {
-                System.Console.WriteLine("You were killed by the Amarok.");
-                play = false;
+                System.Console.Write("Your {weapon} bounces off!");
             }
+            System.Console.Write($"{_board.layout[finder.x, finder.y].monster!.name} rolled a {enemynum}! ");
+            if (enemynum == 20)
+            {
+                System.Console.Write("They rolled a critical hit!");
+                player.LoseHealth(rnd.Next(0,21) * 2);
+            }
+            else if (player.CheckAC(enemynum))
+            {
+                player.LoseHealth(rnd.Next(0,21));
+            }
+            else
+            {
+                System.Console.Write("You successfully dodge their attack!");
+            }
+
         }
-        else
-        {
-            System.Console.WriteLine("You were killed by the Amarok.");
-            play = false;
-        }
+
+        // if (playernum <= enemynum)
+        // {
+        //     System.Console.WriteLine("But the {weapon} bounces off!");
+        // }
+        // else if (playernum == 20)
+        // {
+        //     System.Console.WriteLine("You rolled a critical hit! Double damage!");
+        //     _board?.layout?[finder.x, finder.y]?.monster?.LoseHealth(rnd.Next(1,20) * 2);
+        // }
+        // else
+        // {
+        // }
     } 
     private void DisplayHelp()
     {

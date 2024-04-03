@@ -1,5 +1,5 @@
 namespace Lab08;
-class Monsters : Istats
+public class Monsters : Istats
 {
     public int health { get; set; } = 20;
     public int AC { get; set; } = 14;
@@ -22,6 +22,7 @@ class Monsters : Istats
 
     public void LoseHealth(int dmg)
     {
+        System.Console.WriteLine($"They took {dmg} damage!");
         health = health - dmg;
     }
 }

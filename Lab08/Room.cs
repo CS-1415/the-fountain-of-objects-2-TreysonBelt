@@ -5,6 +5,7 @@ public class Room
     public bool effect {get; set; }
     public int identifier {get; }
     public string? definition {get; set; }
+    public Monsters? monster {get; set; }
     public Room(int num)
     {
         Random rnd = new Random();
@@ -14,6 +15,7 @@ public class Room
             effect = false;
             identifier = num;
             definition = "“You see light in this room coming from outside the cavern. This is the entrance.";
+            monster = null;
         }
         else if (num == 2)
         {
@@ -21,6 +23,7 @@ public class Room
             effect = false;
             identifier = num;
             definition = "You hear water dripping in this room. The Fountain of Objects is here!";
+            monster = null;
         }
         else if (num == 3)
         {
@@ -28,10 +31,11 @@ public class Room
             effect = false;
             identifier = num;
             definition = "You feel a draft. There is a pit in a nearby room";
+            monster = null;
         }
         else if (num == 4)
         {
-            Monsters monster = rnd.Next(3) switch
+            monster = rnd.Next(3) switch
             {
                 1 => new Amaroks(),
                 2 => new Maelstroms(),

@@ -3,7 +3,7 @@ public class Room
 {
     private string? name {get; }
     public bool effect {get; set; }
-    public int identifier {get; }
+    public int identifier {get; set; }
     public string? definition {get; set; }
     public Monsters? monster {get; set; }
     public Room(int num)
@@ -44,7 +44,13 @@ public class Room
             name = "Monster";
             effect = false;
             identifier = num;
-            definition = "You hear the growling and groaning of a maelstrom nearby.";
+            definition = $"You hear the growling and groaning of a {monster.name} nearby.";
         }
+    }
+    public void ClearRoom()
+    {
+        effect = false;
+        identifier = 5;
+        definition = "You see dust and rubble from a battle you fought.";
     }
 }

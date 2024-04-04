@@ -1,6 +1,3 @@
-using System.Formats.Asn1;
-using System.Runtime.InteropServices;
-
 namespace Lab08;
 public class Game
 {
@@ -28,7 +25,7 @@ public class Game
             Console.ReadKey();
         }
     }
-    private void DisplayBar()
+    private static void DisplayBar()
     {
         System.Console.WriteLine("----------------------------------------------------------------------------------");
     }
@@ -161,56 +158,64 @@ public class Game
             if (_board!.layout![finder.x, finder.y].monster!.health <= 0)
             {
                 System.Console.WriteLine($"You killed the {_board.layout[finder.x, finder.y].monster!.name}");
+                player.inventory.GetWeapons(_board.layout[finder.x, finder.y].monster!);
+                _board.layout[finder.x, finder.y].ClearRoom();
+                break;
             }
-            Console.ReadKey();
+            else if (player.health <= 0)
+            {
+                System.Console.WriteLine("You died!");
+                play = false;
+                break;
+            }
             int playernum = rnd.Next(1, 21);
             int enemynum = rnd.Next(1, 21);
-            System.Console.Write($"You rolled a {playernum}! ");
-            if (playernum == 20)
+            System.Console.Write("Would you like to fight or heal? ");
+            string? input = Console.ReadLine();
+            if (input == "heal")
             {
-                System.Console.Write("You rolled a critical hit! ");
-                _board!.layout![finder.x, finder.y].monster!.LoseHealth(rnd.Next(0, 21) * 2);
-
+                player.UseHealthPotion();
             }
-            else if (_board!.layout![finder.x, finder.y].monster!.CheckAC(playernum))
+            else if (input == "attack")
             {
-                _board.layout[finder.x, finder.y].monster!.LoseHealth(rnd.Next(0, 21));
+                System.Console.Write($"You rolled a {playernum}! ");
+                if (playernum == 20)
+                {
+                    System.Console.Write("You rolled a critical hit! ");
+                    _board!.layout![finder.x, finder.y].monster!.LoseHealth(rnd.Next(1, _board.layout[finder.x, finder.y].monster!.inventory.meleeWeapon) * 2);
+
+                }
+                else if (_board!.layout![finder.x, finder.y].monster!.CheckAC(playernum))
+                {
+                    _board.layout[finder.x, finder.y].monster!.LoseHealth(rnd.Next(1, _board.layout[finder.x, finder.y].monster!.inventory.meleeWeapon));
+                }
+                else
+                {
+                    System.Console.WriteLine("Your {weapon} bounces off!");
+                }
             }
             else
             {
-                System.Console.Write("Your {weapon} bounces off!");
-            }
+                System.Console.WriteLine("Oh no! You couldn't think of anything to do!");
+            }    
             System.Console.Write($"{_board.layout[finder.x, finder.y].monster!.name} rolled a {enemynum}! ");
             if (enemynum == 20)
             {
                 System.Console.Write("They rolled a critical hit!");
-                player.LoseHealth(rnd.Next(0,21) * 2);
+                player.LoseHealth(rnd.Next(0,player.inventory.meleeWeapon) * 2);
             }
             else if (player.CheckAC(enemynum))
             {
-                player.LoseHealth(rnd.Next(0,21));
+                player.LoseHealth(rnd.Next(0,player.inventory.meleeWeapon));
             }
             else
             {
-                System.Console.Write("You successfully dodge their attack!");
+                System.Console.WriteLine("You successfully dodge their attack!");
             }
 
         }
-
-        // if (playernum <= enemynum)
-        // {
-        //     System.Console.WriteLine("But the {weapon} bounces off!");
-        // }
-        // else if (playernum == 20)
-        // {
-        //     System.Console.WriteLine("You rolled a critical hit! Double damage!");
-        //     _board?.layout?[finder.x, finder.y]?.monster?.LoseHealth(rnd.Next(1,20) * 2);
-        // }
-        // else
-        // {
-        // }
     } 
-    private void DisplayHelp()
+    private static void DisplayHelp()
     {
         System.Console.WriteLine(@$"You will type in the following codes to interact when prompted:
 up arrow = move up one.

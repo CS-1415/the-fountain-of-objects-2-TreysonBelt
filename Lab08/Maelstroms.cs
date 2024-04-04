@@ -4,6 +4,14 @@ class Maelstroms : Monsters, Istats
     public new int health { get; set; } = 15;
     public new int AC { get; set; } = 13;
     public new string name {get; } = "Maelstrom";
+    public new Inventory inventory {get; set; }
+
+    public Maelstroms()
+    {
+        inventory = new Inventory();
+        inventory!.meleeWeapon = 8;
+        inventory.rangedWeapon = 8;
+    }
 
     public new bool CheckAC(int roll)
     {

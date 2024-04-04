@@ -5,6 +5,7 @@ class Player : Istats
     public int AC { get; set; }
 
     public string name {get; set; } = "Player Name";
+    public Inventory inventory {get; set; }
 
     public Player()
     {
@@ -14,8 +15,9 @@ class Player : Istats
         System.Console.Write("Enter your name: ");
         name = Console.ReadLine();
         System.Console.WriteLine($"You are {name}, a warrior for king kothardic. HP:{health} AC:{AC}");
-    }
+        inventory = new Inventory();
 
+    }
     public bool CheckAC(int roll)
     {
         if (AC >= roll)
@@ -34,5 +36,18 @@ class Player : Istats
     {
         health = health - dmg;
         System.Console.WriteLine($"You lost {dmg} HP! You only have {health} HP left!");
+    }
+    public void UseHealthPotion()
+    {
+        if (inventory.numHealPotions <= 0)
+        {
+            System.Console.WriteLine("You don't have any potions! LOOK OUT!");
+        }
+        else
+        {
+            health = health + inventory.healPotion;
+            inventory.numHealPotions = inventory.numHealPotions - 1;
+            System.Console.WriteLine($"You healed up to {health} HP! You have {inventory.numHealPotions} Health Potions left!");
+        }
     }
 }

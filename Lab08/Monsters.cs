@@ -5,7 +5,11 @@ public class Monsters : Istats
     public int AC { get; set; } = 14;
 
     public string name {get; } = "monster";
-
+    public Inventory inventory {get; set; }
+    public Monsters()
+    {
+        inventory = new Inventory();
+    }
     public bool CheckAC(int roll)
     {
         if (AC >= roll)
